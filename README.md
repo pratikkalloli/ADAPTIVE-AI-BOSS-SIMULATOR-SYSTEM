@@ -1,62 +1,115 @@
-# Boss Fight (Unity Game)
+# Adaptive AI Boss
 
-![boss_fight_scr_1](https://user-images.githubusercontent.com/69635889/219737638-5ad7f704-dc84-47f8-b78f-ed08b6f17132.png)
-![de66c742-4172-4948-9ace-cd6893a6d72d](https://user-images.githubusercontent.com/69635889/219737926-e8caa21d-0005-4bab-8f87-2dff2ddf0b59.jpeg)
+## Overview
 
+Adaptive AI Boss is a Unity-based boss fight game developed as a three-member team project.
 
+The project focuses on creating an engaging combat experience by combining adaptive AI, dynamic combat mechanics, and intelligent enemy behavior. The boss responds to player actions, creating a more challenging and immersive gameplay experience.
 
-# Description
+---
 
-This is a game I created in Unity where I learned to use-
-- Unity's built-in character controller component
-- Behaviour state machines and Navmesh for Enemy AI 
-- Animation events to add anticipation to the enemy's attacks, and registering damage certain points
-- Animation masking
-- Ragdolls and how to enable and disable it
-- Audio sources and how to manipulate it
-- VFX and UI that updates at runtime
-- Coroutines and Ienumerator
+## Features
 
-# Gameplay
+- Adaptive boss AI that adjusts behavior based on player actions
+- Dynamic combat system
+- Real-time player movement and dodge mechanics
+- Enemy navigation using Unity NavMesh
+- State-based AI architecture
+- Character animations and visual effects
+- Health and combat user interface
 
-You must defeat the boss and clear the one-level game. The game features combat mechanics, allowing you to fight the boss with basic attacks and dodge their attacks, and use special moves to take down their health. The boss has a unique AI, which makes every encounter challenging and exciting.
+## Technologies Used
 
-# Controls
+### Game Engine
+- Unity
 
-To play the game, follow these steps:
+### Programming Language
+- C#
 
-1. Move your character using the WASD keys.
-2. Attack the boss using the left mouse button.
-3. Dodge the boss's attacks using the spacebar.
+### AI
+- Adaptive AI
+- Finite State Machine (FSM)
+- Unity NavMesh
 
-The game also allows the player to change direction mid-dodge for more control.
+### Development Tools
+- Visual Studio
+- Git
+- GitHub
 
-# Installation
+## Project Structure
 
-To play the game, you will need to download the source code from the Github repository and open it in the Unity editor. Here's how:
+```text
+adaptive-ai-boss/
+├── Assets/
+├── Packages/
+├── ProjectSettings/
+├── Screenshots/
+├── README.md
+├── LICENSE
+└── .gitignore
+```
 
-- Clone the repository
+## Screenshots
 
-- Open Unity editor and select "Open Project"
+### Gameplay
 
-- Navigate to the local folder where you extracted the game files, Go to Assets->Scenes, and select the main Unity project file   (ends with .unity)
+<p align="center">
+  <img src="Screenshots/gameplay.png" alt="Gameplay" width="800"/>
+</p>
 
-- Wait for Unity to import all the assets and scenes
+### Boss Defeat
 
-- Once the import is complete, you can click on the "Play" button in the Unity editor to run the game
+<p align="center">
+  <img src="Screenshots/boss-defeat.png" alt="Boss Defeat" width="800"/>
+</p>
 
+## Installation
 
-Note: Make sure you have Unity installed on your system before following these steps. Also, keep in mind that you may need to configure some settings, such as the graphics quality or resolution, before playing the game.
+### Requirements
 
-# Credits
+- Unity 2021.3 LTS or later
+- Visual Studio 2022
 
-I would like to give credit to the following resources that I used to create this game:
+### Steps
 
-- [Unity Technologies](https://unity.com/)
+1. Clone the repository.
+2. Open the project in Unity Hub.
+3. Load the main scene.
+4. Press **Play** to start the game.
 
-- [Unity Asset Store](https://assetstore.unity.com/) 
+## Team
 
-- [Brackeys (YouTube tutorial channel)](https://www.youtube.com/@Brackeys)
+This project was developed as a three-member team project by:
 
-- [OpenGameArt.org](https://opengameart.org/)
+- Pratik Mallappa Kalloli
+- Mutturaj Angadi
+- Kamalkanth N
 
+---
+
+## Acknowledgements
+
+This project builds upon the open-source Unity project **Boss-Fight_Unity_Engine** by **MridulRoy98**.
+
+Our team extended the original project with:
+
+- Adaptive AI system
+- Player behavior logging
+- Python-based AI training pipeline
+- Gameplay improvements
+- Additional project documentation
+
+Original repository:
+https://github.com/MridulRoy98/Boss-Fight_Unity_Engine
+
+## Future Improvements
+
+- Improve adaptive AI decision-making
+- Add multiple boss behaviors
+- Introduce difficulty scaling
+- Expand combat mechanics
+- Improve game environment and visual effects
+
+## License
+
+This project is licensed under the MIT License.
