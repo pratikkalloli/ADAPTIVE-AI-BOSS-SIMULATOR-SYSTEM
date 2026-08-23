@@ -1,0 +1,8 @@
+{
+    "PlayerType": "Balanced",
+    "MovementStyle": "Right Preferred",
+    "BossStrategy": "Balanced Combat",
+    "AttackPercentage": 50.6,
+    "BlockPercentage": 0.84,
+    "SprintPercentage": 10.3
+}

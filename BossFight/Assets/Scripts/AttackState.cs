@@ -1,0 +1,70 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+public class AttackState : StateMachineBehaviour
+{
+    EnemyMovement enemyMovement;
+    NavMeshAgent agent;
+    Transform player;
+    CombatManager combatManager;
+
+    private float[] attackOptions = new float[] { 0f, 0.5f, 1f };
+
+    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        enemyMovement = GameObject.Find("NightmareDragon").GetComponent<EnemyMovement>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        agent = animator.GetComponent<NavMeshAgent>();
+    }
+
+    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        float distance = Vector3.Distance(player.position, animator.transform.position);
+
+        if (distance > 3f)
+        {
+            animator.SetBool("isAttacking", false);
+        }
+    }
+
+   public int ChooseDragonAttack()
+{
+    if(BossProfileReader.CurrentPlayerType == "Aggressive")
+    {
+        // More aggressive attacks
+        return Random.Range(1, 3);
+    }
+
+    else if(BossProfileReader.CurrentPlayerType == "Defensive")
+    {
+        // Mix attacks
+        return Random.Range(0, 2);
+    }
+
+    else
+    {
+        // Normal behavior
+        return Random.Range(0, 3);
+    }
+}
+
+    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
+    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {   CombatManager cm = GameObject.Find("GameManager").GetComponent<CombatManager>();
+
+        if (!cm.BossAttackHit)
+        {
+            cm.FailedAttacks++;
+        }
+
+        cm.BossAttackHit = false;
+        
+        animator.SetFloat("attacks", attackOptions[ChooseDragonAttack()]);
+    Debug.Log("Current Player Type = " +
+          BossProfileReader.CurrentPlayerType);
+    }
+}
