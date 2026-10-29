@@ -34,6 +34,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float YSpeed = 0f;
     [SerializeField] private float gravity = -9.81f;
 
+    private bool scriptedControlEnabled;
+    private Vector3 scriptedMoveDirection;
+    private Vector3 scriptedFacingDirection;
+    private bool scriptedDodgeRequested;
+
     
 
     private void Start()
@@ -47,7 +52,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!MyAnimator.GetCurrentAnimatorStateInfo(0).IsName("getHit"))
         {
-            PlayerAttack();
             Move();
         }
     }
@@ -84,10 +88,14 @@ public class PlayerMovement : MonoBehaviour
         Vector3 GravityPull = Vector3.up * YSpeed;
 
         //Getting input from player to move character in specific direction
-        Vector3 MoveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+        Vector3 MoveDirection = scriptedControlEnabled
+            ? scriptedMoveDirection
+            : new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
 
         //Play will move in the direction of camera's POV
-        Vector3 rotatedMovement = Quaternion.Euler(0, MyCamera.transform.rotation.eulerAngles.y, 0) * MoveDirection;
+        Vector3 rotatedMovement = scriptedControlEnabled
+            ? MoveDirection
+            : Quaternion.Euler(0, MyCamera.transform.rotation.eulerAngles.y, 0) * MoveDirection;
 
         cc.Move((GravityPull + rotatedMovement)* PlayerWalkSpeed* Time.deltaTime);
 
@@ -99,7 +107,7 @@ public class PlayerMovement : MonoBehaviour
             MyAnimator.SetBool("walk", true);
             
         }
-        if (rotatedMovement.magnitude > 0 && Input.GetKey(KeyCode.LeftShift))
+        if (!scriptedControlEnabled && rotatedMovement.magnitude > 0 && Input.GetKey(KeyCode.LeftShift))
         {
             //if the player is already moving(walking), and the player presses shift, the running animation will be triggered
             MyAnimator.SetBool("run", true);
@@ -109,12 +117,18 @@ public class PlayerMovement : MonoBehaviour
         }
         else MyAnimator.SetBool("run", false);
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if ((scriptedControlEnabled && scriptedDodgeRequested) ||
+            (!scriptedControlEnabled && Input.GetKeyDown(KeyCode.Space)))
         {
             PlayerDodge(GravityPull, rotatedMovement);
         }
         //Rotating the character towards input axis from player
         //Also smoothing the characters rotation using Lerp
+        if (scriptedControlEnabled && scriptedFacingDirection.sqrMagnitude > 0.0001f)
+        {
+            desiredRotation = Mathf.Atan2(scriptedFacingDirection.x, scriptedFacingDirection.z) * Mathf.Rad2Deg;
+        }
+
         Quaternion CurrentRotation = transform.rotation;
         Quaternion TargetRotation = Quaternion.Euler(0, desiredRotation, 0);
         transform.rotation = Quaternion.Lerp(CurrentRotation, TargetRotation, RotationSpeed *Time.deltaTime);
@@ -122,9 +136,14 @@ public class PlayerMovement : MonoBehaviour
     }
     public bool PlayerAttack()
     {
+        return PlayerAttack(Input.GetMouseButtonDown(0));
+    }
+
+    public bool PlayerAttack(bool attackRequested)
+    {
         if (!MyAnimator.GetCurrentAnimatorStateInfo(1).IsName("attack") && !MyAnimator.GetCurrentAnimatorStateInfo(1).IsName("attack_2"))
         {
-            if (Input.GetMouseButtonDown(0))
+            if (attackRequested)
             {
                 //Pressing the left mouse button will trigger the attack animation
                 MyAnimator.SetLayerWeight(MyAnimator.GetLayerIndex("Attack layer"), 1);
@@ -147,6 +166,45 @@ public class PlayerMovement : MonoBehaviour
         }
         
         return false;
+    }
+
+    public bool IsScriptedControlEnabled
+    {
+        get { return scriptedControlEnabled; }
+    }
+
+    public void SetScriptedControl(bool enabled)
+    {
+        scriptedControlEnabled = enabled;
+        if (!enabled)
+        {
+            scriptedMoveDirection = Vector3.zero;
+            scriptedFacingDirection = Vector3.zero;
+            scriptedDodgeRequested = false;
+        }
+    }
+
+    public void SetScriptedMovement(Vector3 moveDirection, Vector3 facingDirection, bool dodge)
+    {
+        if (!scriptedControlEnabled)
+        {
+            return;
+        }
+
+        moveDirection.y = 0f;
+        facingDirection.y = 0f;
+        scriptedMoveDirection = Vector3.ClampMagnitude(moveDirection, 1f);
+        scriptedFacingDirection = facingDirection;
+        scriptedDodgeRequested = dodge;
+    }
+
+    public void ResetForAgentEpisode()
+    {
+        YSpeed = 0f;
+        desiredRotation = transform.eulerAngles.y;
+        scriptedMoveDirection = Vector3.zero;
+        scriptedFacingDirection = Vector3.zero;
+        scriptedDodgeRequested = false;
     }
 
     

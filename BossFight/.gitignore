@@ -1,0 +1,4 @@
+.venv-mlagents/
+AITraining/Results/
+__pycache__/
+*.pyc

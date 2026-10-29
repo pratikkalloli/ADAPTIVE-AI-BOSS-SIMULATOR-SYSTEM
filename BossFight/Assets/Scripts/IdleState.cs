@@ -18,6 +18,9 @@ public class IdleState : StateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        EnemyMovement movement = animator.GetComponent<EnemyMovement>();
+        if (movement != null && movement.IsAgentControlled) return;
+
         timer += Time.deltaTime;
         if (timer > 3)
         {

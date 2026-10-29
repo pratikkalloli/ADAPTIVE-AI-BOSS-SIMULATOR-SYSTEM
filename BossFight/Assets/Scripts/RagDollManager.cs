@@ -13,7 +13,12 @@ public class RagDollManager : MonoBehaviour
     public Collider[] ragDollColliders;
     public Rigidbody[] ragDollRigidbodies;
 
+    private Transform[] ragdollTransforms;
+    private Vector3[] initialLocalPositions;
+    private Quaternion[] initialLocalRotations;
+
     CombatManager combatMan;
+    private bool ragdollActive;
     private void Start()
     {
         //dragonAnim = GetComponent<Animator>();
@@ -21,12 +26,13 @@ public class RagDollManager : MonoBehaviour
         cc = player.GetComponent<CharacterController>();
         anim = character.GetComponent<Animator>();
         GetRagDollBits();
+        CaptureInitialPose();
         RagdollOff();
     }
 
     private void Update()
     {
-        if (combatMan.getHealth() <= 0)
+        if (combatMan != null && combatMan.getHealth() <= 0 && !ragdollActive)
         {
             RagdollOn();
         }
@@ -36,8 +42,42 @@ public class RagDollManager : MonoBehaviour
         ragDollColliders = character.GetComponentsInChildren<Collider>();
         ragDollRigidbodies = character.GetComponentsInChildren<Rigidbody>();
     }
+
+    private void CaptureInitialPose()
+    {
+        ragdollTransforms = character.GetComponentsInChildren<Transform>(true);
+        initialLocalPositions = new Vector3[ragdollTransforms.Length];
+        initialLocalRotations = new Quaternion[ragdollTransforms.Length];
+        for (int i = 0; i < ragdollTransforms.Length; i++)
+        {
+            initialLocalPositions[i] = ragdollTransforms[i].localPosition;
+            initialLocalRotations[i] = ragdollTransforms[i].localRotation;
+        }
+    }
+
+    public void ResetForAgentEpisode()
+    {
+        RagdollOff();
+        for (int i = 0; i < ragDollRigidbodies.Length; i++)
+        {
+            ragDollRigidbodies[i].velocity = Vector3.zero;
+            ragDollRigidbodies[i].angularVelocity = Vector3.zero;
+            ragDollRigidbodies[i].isKinematic = true;
+        }
+        for (int i = 0; i < ragdollTransforms.Length; i++)
+        {
+            ragdollTransforms[i].localPosition = initialLocalPositions[i];
+            ragdollTransforms[i].localRotation = initialLocalRotations[i];
+        }
+    }
     public void RagdollOn()
     {
+        if (ragdollActive)
+        {
+            return;
+        }
+
+        ragdollActive = true;
         dragonAnim.SetBool("isPatrolling", false);
         dragonAnim.SetBool("isAttacking", false);
         dragonAnim.SetBool("isChasing", false);
@@ -55,6 +95,7 @@ public class RagDollManager : MonoBehaviour
     }
     public void RagdollOff()
     {
+        ragdollActive = false;
         anim.enabled = true;
         cc.enabled = true;
         foreach (Collider col in ragDollColliders)

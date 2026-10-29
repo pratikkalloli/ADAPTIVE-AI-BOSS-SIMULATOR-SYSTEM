@@ -15,8 +15,10 @@ public class BossProfileReader : MonoBehaviour
 
     public string playerType;
 
-    void Start()
+    void Awake()
     {
+        CurrentPlayerType = "Balanced";
+
         string path =
             Application.dataPath +
             "/../AITraining/player_profile.json";

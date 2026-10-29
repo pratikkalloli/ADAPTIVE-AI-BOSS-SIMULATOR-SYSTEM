@@ -23,6 +23,13 @@ public class UI_Manager : MonoBehaviour
     {
         healthBarSprite.fillAmount = currentHealth / maxHealth;
     }
+
+    public void ResetForAgentEpisode()
+    {
+        StopAllCoroutines();
+        if (healthBarSprite != null) healthBarSprite.fillAmount = 1f;
+        if (bloodSplatter != null) bloodSplatter.color = transparentColor;
+    }
     public IEnumerator DoFade()
     {
         float elapsedTime = 0f;
